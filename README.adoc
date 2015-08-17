@@ -1,0 +1,394 @@
+= Belcebur Basics
+
+'''
+
+==== Require PHP >=5.4
+
+- View Helper
+- Abstract Entity
+- Abstract Gedmo Entity
+- Abstract Repository
+- Abstract Gedmo Translatable Repository
+
+
+== View Helper
+
+Inside view // En las Vistas
+
+[source,php]
+----
+<?php
+/**
+* @var \BelceburBasic\View\Helper\BTools $btools
+*/
+
+$btools=$this->bTools();
+
+$btools->getCurrentUrl(array $extraParams); //Get URL with params and add new params
+
+$btools->convertUrlQuery("test=1&temp=2"); //Returns the url query as associative array -> array("test"=>1,"temp"=>2);
+
+$btools->arrayToAttributes(array("test"=>1,"temp"=>2)); // Convert Array to html attributes -> test="1" temp="2";
+
+$btools->getParams(); // Get RouteMatch Params
+
+$btools->getParam($name,$default); // Get RouteMatch Param or Default
+
+$btools->slugify("حولا كيو تل"); //        ->           'hwla-kyw-tl'
+$btools->slugify("你好，这样的"); //             ->   'ni-hao-zhe-yang-de'
+$btools->slugify("그러한 안녕하세요"); //          ->       'geuleohan-annyeonghaseyo'
+$btools->slugify("त्यस्तो नमस्ते");  //    ->           'tyasto-namas'
+$btools->slugify("hola que tal"); //       ->           'hola-que-tal'
+$btools->slugify("привет, что такой");//   ->               'privet-cto-takoj'
+
+Same with Static Method
+
+BTools::SlugifyStaticPro("حولا كيو تل"),
+BTools::SlugifyStaticPro("你好，这样的"),
+BTools::SlugifyStaticPro("그러한 안녕하세요"),
+BTools::SlugifyStaticPro("त्यस्तो नमस्"),
+BTools::SlugifyStaticPro("hola que tal"),
+BTools::SlugifyStaticPro("привет, что такой")
+
+
+// And Getters from:
+
+
+    /**
+     *
+     * @var \Zend\Http\PhpEnvironment\Request
+     */
+    protected $request;
+    /**
+     *
+     * @var \Zend\Mvc\MvcEvent
+     */
+    protected $event;
+
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    protected $em;
+
+    /**
+     * @var \Zend\I18n\Translator\Translator
+     */
+    protected $translator;
+
+
+    /**
+     * @var \Zend\ServiceManager\ServiceManager
+     */
+    protected $serviceManager;
+
+    /**
+     * @var \Zend\View\HelperPluginManager
+     */
+    protected $pluginManager;
+
+
+    /**
+     * @var \Zend\Mvc\Application
+     */
+    protected $app;
+
+----
+
+
+== Create Other Zend Navigation
+
+Inside config file. / En un archivo de configuración
+
+http://framework.zend.com/manual/current/en/tutorials/tutorial.navigation.html
+
+[source,php]
+----
+<?php
+return array(
+    'navigation'      => array(
+        'bAdmin'  => array(), // New Navigation
+        'default' => array(), //Standar Navigation
+    )
+);
+
+----
+
+Inside View / En las vistas
+
+[source,php]
+----
+
+<?php echo $this->navigation()->breadcrumbs('admin'); ?>  // To Create Breadcrumb
+
+<?php echo $this->navigation()->menu('admin')->setUlClass('nav navbar-nav'); ?> // To Create Menu
+
+----
+
+== Abstract Doctrine Entity /  Doctrine Entity abstracta
+
+Add new search methods to your entity
+
+Añade nuevos metodos de busqueda a tus entities
+
+== Example Custom Repository
+
+[source,php]
+----
+<?php
+
+
+namespace Application\Entity;
+
+use BelceburBasic\Resource\Doctrine\Entity;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Class Entity
+ *
+ * @package Application\Entity
+ */
+class User extends Entity {
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    protected $id;
+
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     */
+    protected $email;
+
+}
+----
+
+== Example Custom Repository With Gedmo Extensions Translatable
+
+Gedmo Extensions Translatable https://github.com/Atlantic18/DoctrineExtensions
+
+
+[source,php]
+----
+<?php
+
+
+namespace Application\Entity;
+
+use BelceburBasic\Resource\Doctrine\Gedmo\EntityTranslatable;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Class Entity
+ *
+ * @package Application\Entity
+ */
+class User extends EntityTranslatable {
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    protected $id;
+
+     /**
+      * @var string
+      *
+      * @Gedmo\Translatable()
+      * @ORM\Column(name="name", type="string", length=100, nullable=false)
+      */
+     protected $name;
+
+}
+----
+
+
+
+=== Included Methods/ Metodos Incluidos
+
+
+==== ONLY GEDMO
+
+getTranslatableLocale()
+setTranslatableLocale()
+
+==== setFromArray(array $data)
+
+[source,php]
+ ----
+ <?php
+
+ /** Update User */
+ $user=$user->setFromArray(array('email'=> 'test@test.com'));
+
+ /** Create New User */
+  $user=User::setFromArray(array('email'=> 'test@test.com'));
+ ----
+
+==== fieldToSetterMethod($propertyName)
+[source,php]
+----
+<?php
+$user->fieldToSetterMethod('email')
+----
+
+===== Output:
+setEmail
+
+==== fieldToGetterMethod($propertyName)
+[source,php]
+----
+<?php
+$user->fieldToGetterMethod('email')
+----
+
+===== Output:
+getEmail
+
+==== toCamelCase
+[source,php]
+----
+<?php
+$user->toCamelCase('email_and_name')
+----
+
+===== Output:
+emailAndName
+
+==== fromCamelCase
+[source,php]
+----
+<?php
+$user->toCamelCase('emailAndName')
+----
+
+===== Output:
+email_and_name
+
+
+==== getProperty($propertyName)
+[source,php]
+----
+<?php
+$user->getProperty('email') == $user->getEmail() == $user->email
+----
+
+===== Output:
+
+==== toArray
+[source,php]
+----
+<?php
+
+$array= $user->toArray();
+
+----
+
+===== Output:
+[source,php]
+----
+<?php
+array(
+    'id' => 1,
+    'name' => 'David',
+    'email' => ...,
+)
+----
+
+==== extractGetMethods
+
+List Getters
+[source,php]
+----
+<?php
+array(
+    getId
+    getName
+    getEmail
+)
+----
+
+==== extractSetMethods
+
+List Setters
+[source,php]
+----
+<?php
+array(
+    setId
+    setName
+    setEmail
+)
+----
+
+
+
+== Abstract Repositories / Repositorios Abstractos
+
+Add new search methods to your repositories
+
+Añade nuevos metodos de busqueda a tus repositorios
+
+== Example Custom Repository
+
+[source,php]
+----
+<?php
+
+
+namespace Application\Repository;
+
+use BelceburBasic\Resource\Doctrine\EntityRepository;
+
+/**
+ * Class Event
+ *
+ * @package Application\Repository
+ */
+class Event extends EntityRepository {
+}
+----
+
+== Example Gedmo Translations
+
+If you use Gedmo Extensions Translatable https://github.com/Atlantic18/DoctrineExtensions, extend your repository from EntityRepositoryTranslatable and adds new search methods. It is not necessary to include the Gedmo Walker.
+
+Si utiliza las Gedmo Extensions Translatable https://github.com/Atlantic18/DoctrineExtensions, extienda su repositorio de EntityRepositoryTranslatable y añada nuevos métodos de búsqueda. No es necesario incluir el Gedmo Walker.
+
+[source,php]
+----
+<?php
+
+namespace Application\Repository;
+
+use BelceburBasic\Resource\Doctrine\Gedmo\EntityRepositoryTranslatable;
+
+/**
+ * Class User
+ *
+ * @package Application\Repository
+ */
+class User extends EntityRepositoryTranslatable
+{
+}
+----
+
+=== Included Methods/ Metodos Incluidos
+
+- findNotBy(array $criteria, array $orderBy = NULL, $limit = NULL, $offset = NULL)
+- findOneNotBy(array $criteria)
+- findOrLikeBy(array $orCriteria, array $orderBy = NULL, $limit = NULL, $offset = NULL, $andCriteria = NULL)
+- findOneOrLikeBy(array $criteria)
+- findOneBy(array $criteria)  //Only for Gedmo Extensions (Include Gedmo Walker on query)
+- findOneLikeBy(array $criteria)
+- findNotLikeBy(array $criteria, array $orderBy = NULL, $limit = NULL, $offset = NULL)
+- findBy(array $criteria, array $orderBy = NULL, $limit = NULL, $offset = NULL)
+- findLikeBy(array $criteria, array $orderBy = NULL, $limit = NULL, $offset = NULL)

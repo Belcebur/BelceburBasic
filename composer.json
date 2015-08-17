@@ -1,0 +1,40 @@
+{
+  "name": "belcebur/belcebur-basic",
+  "type": "library",
+  "description": "Basic tools from zf2",
+  "keywords": [
+    "utils",
+    "slugify",
+    "doctrine",
+    "zf2",
+    "view helper",
+    "view helpers",
+    "repository",
+    "repositories",
+    "entity",
+    "entities",
+    "orm",
+    "Gedmo",
+    "Gedmo Translatable",
+    "form"
+  ],
+  "authors": [
+    {
+      "name": "David García",
+      "email": "garcia.gordo.david@gmail.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "require": {
+    "php": ">=5.4"
+  },
+  "suggest": {
+    "gedmo/doctrine-extensions": "Multiple Doctrine Extensions",
+    "belcebur/belcebur-auth": "To create multiple doctrine authentication"
+  },
+  "autoload": {
+    "classmap": [
+      "Module.php"
+    ]
+  }
+}
