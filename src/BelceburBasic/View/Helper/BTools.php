@@ -245,7 +245,6 @@ class BTools extends AbstractHelper {
      * @param array  $replace
      * @param string $delimiter
      *
-     * @internal param string $text
      * @return string
      */
     static function SlugifyStatic($text, $replace = array(), $delimiter = '-') {
