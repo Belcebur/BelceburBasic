@@ -1,7 +1,7 @@
 {
   "name": "belcebur/belcebur-basic",
   "type": "library",
-  "description": "Basic tools from zf2",
+  "description": "Basic Tools from ZF2 + Doctrine + Gedmo Extension / Utilidades varias para ZF2 + Doctrine + Gedmo Extension",
   "keywords": [
     "utils",
     "slugify",
