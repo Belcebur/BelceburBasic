@@ -4,12 +4,58 @@
 
 ==== Require PHP >=5.4
 
+- Nl2brFilter
 - View Helper
 - Abstract Entity
 - Abstract Gedmo Entity
 - Abstract Repository
 - Abstract Gedmo Translatable Repository
 
+== Nl2brFilter
+
+Añadir el filtro a los formularios
+
+In your input filter configuration, add the `nl2br` filter to filter the result. An example form:
+
+[source,php]
+----
+<?php
+namespace Application\Form;
+
+use Zend\InputFilter;
+use Zend\Form\Form;
+
+class Foo extends Form implements
+    InputFilter\InputFilterProviderInterface
+{
+    public function __construct($name = null)
+    {
+        parent::__construct($name);
+
+        $this->add(array(
+            'name'    => 'text',
+            'options' => array(
+                'label' => 'Text'
+            ),
+            'attributes' => array(
+                'type'  => 'textarea',
+            ),
+        ));
+    }
+
+    public function getInputFilterSpecification()
+    {
+        return array(
+            'text'  => array(
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'nl2br'),
+                ),
+            ),
+        );
+    }
+}
+----
 
 == View Helper
 
