@@ -28,6 +28,11 @@
   "require": {
     "php": ">=5.4"
   },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  },
   "suggest": {
     "gedmo/doctrine-extensions": "Multiple Doctrine Extensions",
     "belcebur/belcebur-auth": "To create multiple doctrine authentication"
