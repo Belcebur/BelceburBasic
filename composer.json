@@ -2,22 +2,7 @@
   "name": "belcebur/belcebur-basic",
   "type": "library",
   "description": "Basic Tools from ZF2 + Doctrine + Gedmo Extension / Utilidades varias para ZF2 + Doctrine + Gedmo Extension",
-  "keywords": [
-    "utils",
-    "slugify",
-    "doctrine",
-    "zf2",
-    "view helper",
-    "view helpers",
-    "repository",
-    "repositories",
-    "entity",
-    "entities",
-    "orm",
-    "Gedmo",
-    "Gedmo Translatable",
-    "form"
-  ],
+  "keywords": ["utils","slugify","doctrine","zf2","view helper","view helpers","repository","repositories","entity","entities","orm","Gedmo","Gedmo Translatable","form"],
   "authors": [
     {
       "name": "David García",
@@ -30,7 +15,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.0.x-dev"
+      "dev-master": "1.0"
     }
   },
   "suggest": {
