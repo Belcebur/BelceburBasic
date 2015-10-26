@@ -63,20 +63,20 @@ trait EntityRepositoryTrait {
             if (is_array($value)) {
                 $orx = $expr->orX();
                 foreach ($value as $internalValue) {
-                    if (strpos($internalValue, '%') !== FALSE) {
+                    if (is_string($internalValue) && strpos($internalValue, '%') !== FALSE) {
                         $orx->add($expr->like('entity.' . $field, "'{$internalValue}'"));
                     } else {
                         $orx->add($expr->eq('entity.' . $field, "'{$internalValue}'"));
                     }
                 }
                 $qb->andWhere($orx);
-            } elseif (strpos($value, '%') !== FALSE) {
-                $qb->andWhere($expr->like('entity.' . $field, "'{$value}'"));
             } elseif (is_object($value)) {
                 $meta               = $this->getEntityManager()->getClassMetadata(get_class($value));
                 $identifier         = $meta->getSingleIdentifierFieldName();
                 $identifierFunction = "get{$identifier}";
                 $qb->andWhere($expr->eq('entity.' . $field, call_user_func(array($value, $identifierFunction))));
+            } elseif (is_string($value) && strpos($value, '%') !== FALSE) {
+                $qb->andWhere($expr->like('entity.' . $field, "'{$value}'"));
             } else {
                 $qb->andWhere($expr->eq('entity.' . $field, "'{$value}'"));
             }
@@ -118,13 +118,13 @@ trait EntityRepositoryTrait {
         foreach ($orCriteria as $field => $value) {
             if (is_array($value)) {
                 foreach ($value as $internalValue) {
-                    if (strpos($internalValue, '%') !== FALSE) {
+                    if (is_string($internalValue) && strpos($internalValue, '%') !== FALSE) {
                         $orx->add($expr->like('entity.' . $field, "'{$internalValue}'"));
                     } else {
                         $orx->add($expr->eq('entity.' . $field, "'{$internalValue}'"));
                     }
                 }
-            } elseif (strpos($value, '%') !== FALSE) {
+            } elseif (is_string($value) && strpos($value, '%') !== FALSE) {
                 $orx->add($expr->like('entity.' . $field, "'{$value}'"));
             } elseif (is_object($value)) {
                 $meta               = $this->getEntityManager()->getClassMetadata(get_class($value));
@@ -152,7 +152,7 @@ trait EntityRepositoryTrait {
         if ($andCriteria) {
             $andX = $expr->andX();
             foreach ($andCriteria as $field => $value) {
-                if (strpos($value, '%') !== FALSE) {
+                if (is_string($value) && strpos($value, '%') !== FALSE) {
                     $andX->add($expr->like('entity.' . $field, "'{$value}'"));
                 } else {
                     $andX->add($expr->eq('entity.' . $field, "'{$value}'"));
@@ -187,7 +187,7 @@ trait EntityRepositoryTrait {
             if (is_array($value)) {
                 $andx = $expr->andX();
                 foreach ($value as $internalValue) {
-                    if (strpos($internalValue, '%') !== FALSE) {
+                    if (is_string($internalValue) && strpos($internalValue, '%') !== FALSE) {
                         $andx->add($expr->notLike('entity.' . $field, "'{$internalValue}'"));
                     } elseif (is_object($internalValue)) {
                         $meta               = $this->getEntityManager()->getClassMetadata(get_class($internalValue));
@@ -199,7 +199,7 @@ trait EntityRepositoryTrait {
                     }
                 }
                 $qb->andWhere($andx);
-            } elseif (strpos($value, '%') !== FALSE) {
+            } elseif (is_string($value) && strpos($value, '%') !== FALSE) {
                 $qb->andWhere($expr->notLike('entity.' . $field, "'{$value}'"));
             } elseif (is_object($value)) {
                 $meta               = $this->getEntityManager()->getClassMetadata(get_class($value));
