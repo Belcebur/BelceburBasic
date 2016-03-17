@@ -109,7 +109,7 @@ class BTools extends AbstractHelper {
      * @return array
      */
     public function getParams() {
-        return $this->getRouteMatch()->getParams();
+        return ($this->getRouteMatch()) ? $this->getRouteMatch()->getParams() : array();
     }
 
     /**
@@ -140,7 +140,7 @@ class BTools extends AbstractHelper {
      * @return mixed
      */
     public function getParam($name, $default) {
-        return $this->getRouteMatch()->getParam($name, $default);
+        return ($this->getRouteMatch()) ? $this->getRouteMatch()->getParam($name, $default) : $default;
     }
 
     /**
