@@ -34,15 +34,21 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
         $query = $this->queryFindNotBy($criteria, $orderBy, $limit, $offset);
 
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
-        if (defined(BELCEBUR_GEDMO_TRANSLATION_LOCALE)) {
-            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
-            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        }
+        $this->applyTranslatorGedmoHints($query);
 
 
         return new ArrayCollection($query->getResult());
     }
 
+    /**
+     * @param Query $query
+     */
+    protected function applyTranslatorGedmoHints(Query &$query) {
+        if (BELCEBUR_GEDMO_TRANSLATION_LOCALE !== 'BELCEBUR_GEDMO_TRANSLATION_LOCALE') {
+            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
+            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
+        }
+    }
 
     /**
      * @param array $criteria
@@ -53,10 +59,7 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
     public function findOneNotBy(array $criteria) {
         $query = $this->queryFindNotBy($criteria, array(), 1);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
-        if (defined(BELCEBUR_GEDMO_TRANSLATION_LOCALE)) {
-            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
-            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        }
+        $this->applyTranslatorGedmoHints($query);
 
         return $query->getOneOrNullResult();
     }
@@ -73,10 +76,7 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
     public function findOrLikeBy(array $orCriteria, array $orderBy = NULL, $limit = NULL, $offset = NULL, $andCriteria = NULL) {
         $query = $this->queryFindOrLikeBy($orCriteria, $orderBy, $limit, $offset, $andCriteria);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
-        if (defined(BELCEBUR_GEDMO_TRANSLATION_LOCALE)) {
-            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
-            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        }
+        $this->applyTranslatorGedmoHints($query);
 
         return new ArrayCollection($query->getResult());
     }
@@ -89,10 +89,8 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
     public function findOneOrLikeBy(array $criteria) {
         $query = $this->queryFindOrLikeBy($criteria, array(), 1);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
-        if (defined(BELCEBUR_GEDMO_TRANSLATION_LOCALE)) {
-            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
-            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        }
+        $this->applyTranslatorGedmoHints($query);
+
         return $query->getOneOrNullResult();
     }
 
@@ -114,10 +112,7 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
     public function findOneLikeBy(array $criteria) {
         $query = $this->queryFindLikeBy($criteria, array(), 1);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
-        if (defined(BELCEBUR_GEDMO_TRANSLATION_LOCALE)) {
-            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
-            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        }
+        $this->applyTranslatorGedmoHints($query);
 
         return $query->getOneOrNullResult();
     }
@@ -137,12 +132,16 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
     public function findNotLikeBy(array $criteria, array $orderBy = NULL, $limit = NULL, $offset = NULL) {
         $query = $this->queryFindNotLikeBy($criteria, $orderBy, $limit, $offset);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
-        if (defined(BELCEBUR_GEDMO_TRANSLATION_LOCALE)) {
-            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
-            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        }
+        $this->applyTranslatorGedmoHints($query);
 
         return new ArrayCollection($query->getResult());
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function findAll() {
+        return $this->findBy([]);
     }
 
     /**
@@ -173,10 +172,7 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
 
         $query = $this->queryFindLikeBy($criteria, $orderBy, $limit, $offset);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
-        if (defined(BELCEBUR_GEDMO_TRANSLATION_LOCALE)) {
-            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
-            $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        }
+        $this->applyTranslatorGedmoHints($query);
 
         return new ArrayCollection($query->getResult());
     }
