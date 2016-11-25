@@ -1,6 +1,8 @@
 <?php
 namespace BelceburBasic;
 
+use Zend\Mvc\MvcEvent;
+
 class Module {
 
     public function onBootstrap(MvcEvent $e) {
