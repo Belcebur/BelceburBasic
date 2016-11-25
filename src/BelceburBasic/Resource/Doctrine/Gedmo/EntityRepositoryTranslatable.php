@@ -45,6 +45,7 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository {
      */
     protected function applyTranslatorGedmoHints(Query &$query) {
         if (BELCEBUR_GEDMO_TRANSLATION_LOCALE !== 'BELCEBUR_GEDMO_TRANSLATION_LOCALE') {
+            $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
             $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
             $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
         }
