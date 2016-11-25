@@ -62,7 +62,7 @@ trait EntityRepositoryTrait {
         foreach ($criteria as $field => $value) {
             if (is_array($value)) {
                 $orx = $expr->orX();
-                foreach ($value as $internalValue) {
+                foreach ((array)$value as $internalValue) {
                     if (is_string($internalValue) && strpos($internalValue, '%') !== FALSE) {
                         $orx->add($expr->like('entity.' . $field, "'{$internalValue}'"));
                     } else {
@@ -117,7 +117,7 @@ trait EntityRepositoryTrait {
         $qb->select('entity')->from($this->getEntityName(), 'entity');
         foreach ($orCriteria as $field => $value) {
             if (is_array($value)) {
-                foreach ($value as $internalValue) {
+                foreach ((array)$value as $internalValue) {
                     if (is_string($internalValue) && strpos($internalValue, '%') !== FALSE) {
                         $orx->add($expr->like('entity.' . $field, "'{$internalValue}'"));
                     } else {
@@ -185,20 +185,20 @@ trait EntityRepositoryTrait {
         $qb->select('entity')->from($this->getEntityName(), 'entity');
         foreach ($criteria as $field => $value) {
             if (is_array($value)) {
-                $andx = $expr->andX();
+                $andX = $expr->andX();
                 foreach ($value as $internalValue) {
                     if (is_string($internalValue) && strpos($internalValue, '%') !== FALSE) {
-                        $andx->add($expr->notLike('entity.' . $field, "'{$internalValue}'"));
+                        $andX->add($expr->notLike('entity.' . $field, "'{$internalValue}'"));
                     } elseif (is_object($internalValue)) {
                         $meta               = $this->getEntityManager()->getClassMetadata(get_class($internalValue));
                         $identifier         = $meta->getSingleIdentifierFieldName();
                         $identifierFunction = "get{$identifier}";
-                        $andx->add($expr->neq('entity.' . $field, call_user_func(array($internalValue, $identifierFunction))));
+                        $andX->add($expr->neq('entity.' . $field, call_user_func(array($internalValue, $identifierFunction))));
                     } else {
-                        $andx->add($expr->neq('entity.' . $field, "'{$internalValue}'"));
+                        $andX->add($expr->neq('entity.' . $field, "'{$internalValue}'"));
                     }
                 }
-                $qb->andWhere($andx);
+                $qb->andWhere($andX);
             } elseif (is_string($value) && strpos($value, '%') !== FALSE) {
                 $qb->andWhere($expr->notLike('entity.' . $field, "'{$value}'"));
             } elseif (is_object($value)) {

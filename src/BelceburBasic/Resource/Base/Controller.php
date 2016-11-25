@@ -88,7 +88,7 @@ abstract class Controller extends AbstractActionController {
      * @return string
      */
     function random_password($length = 8) {
-        $chars    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$%^&_-.?";
+        $chars    = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$%^&_-.?';
         $password = substr(str_shuffle($chars), 0, $length);
 
         return $password;
@@ -96,9 +96,9 @@ abstract class Controller extends AbstractActionController {
 
 
     public function downloadFile($filePath, $filename = FALSE) {
-        $name     = $filename ? $filename : basename($filePath);
+        $name     = $filename ?: basename($filePath);
         $response = new Stream();
-        $response->setStream(fopen($filePath, 'r'));
+        $response->setStream(fopen($filePath, 'br'));
         $response->setStatusCode(200);
         $response->setStreamName(basename($filePath));
         $headers = new Headers();

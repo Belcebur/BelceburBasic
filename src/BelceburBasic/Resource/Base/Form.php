@@ -32,7 +32,7 @@ class Form extends ZendForm {
     /**
      * @param array $options
      */
-    function __construct($options = array()) {
+    public function __construct($options = array()) {
         parent::__construct();
         $this->em         = isset($options['em']) ? $options['em'] : NULL;
         $this->entity     = isset($options['entity']) ? $options['entity'] : NULL;

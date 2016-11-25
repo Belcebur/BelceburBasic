@@ -15,7 +15,7 @@ use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
  */
 abstract class Entity {
 
-    function __construct($params = NULL) {
+    public function __construct($params = NULL) {
     }
 
     /**
