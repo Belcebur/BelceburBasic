@@ -1,6 +1,7 @@
 {
   "name": "belcebur/belcebur-basic",
   "type": "library",
+  "version": "1.1.0",
   "description": "Basic Tools from ZF2 + Doctrine + Gedmo Extension / Utilidades varias para ZF2 + Doctrine + Gedmo Extension",
   "keywords": [
     "utils",

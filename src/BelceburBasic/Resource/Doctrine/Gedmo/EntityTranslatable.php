@@ -24,7 +24,7 @@ abstract class EntityTranslatable extends Entity implements Translatable {
      */
     protected $locale;
 
-    function __construct($params = NULL) {
+    public function __construct($params = NULL) {
         parent::__construct($params);
     }
 
