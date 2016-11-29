@@ -98,7 +98,7 @@ abstract class Controller extends AbstractActionController {
     public function downloadFile($filePath, $filename = FALSE) {
         $name     = $filename ?: basename($filePath);
         $response = new Stream();
-        $response->setStream(fopen($filePath, 'br'));
+        $response->setStream(fopen($filePath, 'r'));
         $response->setStatusCode(200);
         $response->setStreamName(basename($filePath));
         $headers = new Headers();
