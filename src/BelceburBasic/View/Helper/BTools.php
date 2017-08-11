@@ -2,10 +2,18 @@
 
 namespace BelceburBasic\View\Helper;
 
+use Doctrine\ORM\EntityManager;
+use Zend\Http\PhpEnvironment\Request;
+use Zend\Mvc\Application;
+use Zend\Mvc\I18n\Translator;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
+use Zend\ServiceManager\ServiceManager;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\HelperPluginManager;
 
-class BTools extends AbstractHelper {
+class BTools extends AbstractHelper
+{
     /**
      *
      * @var \Zend\Http\PhpEnvironment\Request
@@ -18,12 +26,12 @@ class BTools extends AbstractHelper {
     protected $event;
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     protected $em;
 
     /**
-     * @var \Zend\I18n\Translator\Translator
+     * @var \Zend\Mvc\I18n\Translator
      */
     protected $translator;
 
@@ -44,14 +52,68 @@ class BTools extends AbstractHelper {
      */
     protected $app;
 
-    public function __construct(HelperPluginManager $pluginManager) {
-        $this->pluginManager  = $pluginManager;
+    public function __construct(HelperPluginManager $pluginManager)
+    {
+        $this->pluginManager = $pluginManager;
         $this->serviceManager = $pluginManager->getServiceLocator();
-        $this->app            = $pluginManager->getServiceLocator()->get('Application');
-        $this->request        = $this->app->getRequest();
-        $this->event          = $this->app->getMvcEvent();
-        $this->em             = $this->serviceManager->get('Doctrine\ORM\EntityManager');
-        $this->translator     = $this->serviceManager->get('translator');
+        $this->app = $pluginManager->getServiceLocator()->get('Application');
+        $this->request = $this->app->getRequest();
+        $this->event = $this->app->getMvcEvent();
+        $this->em = $this->serviceManager->get(EntityManager::class);
+        $this->translator = $this->serviceManager->get('translator');
+    }
+
+    /**
+     * Convert BR tags to newlines and carriage returns.
+     *
+     * @param string $string The string to convert
+     * @param string $separator The string to use as line separator
+     *
+     * @return string The converted string
+     */
+    public static function br2nl($string, $separator = PHP_EOL): string
+    {
+        $separator = in_array($separator, ["\n", "\r", "\r\n", "\n\r", chr(30), chr(155), PHP_EOL], FALSE) ? $separator : PHP_EOL;
+
+        return self::superTrim(preg_replace('/<br(\s*)?\/?>/i', $separator, $string));
+    }
+
+    public static function superTrim($val): string
+    {
+        return trim(\preg_replace(['#^(\d\.\s|-|&nbsp;)#'], [''], trim(html_entity_decode($val), " \t\n\r\0\x0B\xC2\xA0")), " \t\n\r\0\x0B\xC2\xA0");
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    public static function nl2br(string $string): string
+    {
+        $exploded = \preg_split('/\s{2,}/', \preg_replace('/( ){2,}/', ' ', Tools::br2nl($string)));
+        if (\count($exploded) === 1) {
+            return self::superTrim(current($exploded));
+        }
+        return \implode('<br/><br/>', $exploded);
+    }
+
+    /**
+     * @param array $attributes
+     * @param string $quote
+     * @return string
+     */
+    public static function arrayToAttributesStatic(array $attributes, $quote = '"'): string
+    {
+        $string = '';
+        foreach ($attributes as $key => $attribute) {
+            if (\is_array($attribute)) {
+                $attrs = \explode(' ', \implode(' ', $attribute));
+                \array_unique($attrs);
+                $attribute = \implode(' ', $attribute);
+            }
+            $string .= " {$key}={$quote}{$attribute}{$quote}";
+        }
+
+        return $string;
     }
 
     /**
@@ -61,8 +123,9 @@ class BTools extends AbstractHelper {
      *
      * @return string
      */
-    public function getCurrentUrl($extraParams = array()) {
-        $uri    = parse_url($_SERVER['REQUEST_URI']);
+    public function getCurrentUrl(array $extraParams = []): string
+    {
+        $uri = parse_url($_SERVER['REQUEST_URI']);
         $params = array_merge($this->convertUrlQuery($_SERVER['QUERY_STRING']), $extraParams);
 
         return $uri['path'] . '?' . http_build_query($params);
@@ -75,28 +138,30 @@ class BTools extends AbstractHelper {
      *
      * @return    array    params
      */
-    public function convertUrlQuery($query) {
+    public function convertUrlQuery(string $query): array
+    {
         if (!empty($query)) {
-            return array();
+            return [];
         }
         $queryParts = explode('&', $query);
-        $params     = array();
+        $params = [];
         foreach ($queryParts as $param) {
-            $item             = explode('=', $param);
-            $params[$item[0]] = isset($item[1]) ? $item[1] : '';
+            $item = explode('=', $param);
+            $params[$item[0]] = $item[1] ?? '';
         }
 
         return $params;
     }
 
     /**
-     * @param array  $attributes
+     * @param array $attributes
      *
      * @param string $quote
      *
      * @return string
      */
-    public function arrayToAttributes(array $attributes, $quote = '"') {
+    public function arrayToAttributes(array $attributes = [], $quote = '"'): string
+    {
         $string = '';
         foreach ($attributes as $key => $attribute) {
             $string .= " {$key}={$quote}{$attribute}{$quote}";
@@ -108,28 +173,32 @@ class BTools extends AbstractHelper {
     /**
      * @return array
      */
-    public function getParams() {
-        return $this->getRouteMatch() ? $this->getRouteMatch()->getParams() : array();
+    public function getParams(): array
+    {
+        return $this->getRouteMatch() ? $this->getRouteMatch()->getParams() : [];
     }
 
     /**
      * @return \Zend\Mvc\Router\RouteMatch
      */
-    public function getRouteMatch() {
+    public function getRouteMatch(): RouteMatch
+    {
         return $this->getEvent()->getRouteMatch();
     }
 
     /**
      * @return \Zend\Mvc\MvcEvent
      */
-    public function getEvent() {
+    public function getEvent(): MvcEvent
+    {
         return $this->event;
     }
 
     /**
      * @param \Zend\Mvc\MvcEvent $event
      */
-    public function setEvent($event) {
+    public function setEvent($event)
+    {
         $this->event = $event;
     }
 
@@ -139,102 +208,116 @@ class BTools extends AbstractHelper {
      *
      * @return mixed
      */
-    public function getParam($name, $default) {
+    public function getParam($name, $default)
+    {
         return $this->getRouteMatch() ? $this->getRouteMatch()->getParam($name, $default) : $default;
     }
 
     /**
      * @return \Zend\Http\PhpEnvironment\Request
      */
-    public function getRequest() {
+    public function getRequest(): Request
+    {
         return $this->request;
     }
 
     /**
      * @param \Zend\Http\PhpEnvironment\Request $request
      */
-    public function setRequest($request) {
+    public function setRequest($request)
+    {
         $this->request = $request;
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
+     * @return EntityManager
      */
-    public function getEm() {
+    public function getEm(): EntityManager
+    {
         return $this->em;
     }
 
     /**
-     * @param \Doctrine\ORM\EntityManager $em
+     * @param EntityManager $em
      */
-    public function setEm($em) {
+    public function setEm($em)
+    {
         $this->em = $em;
     }
 
     /**
-     * @return \Zend\I18n\Translator\Translator
+     * @return \Zend\Mvc\I18n\Translator
      */
-    public function getTranslator() {
+    public function getTranslator(): Translator
+    {
         return $this->translator;
     }
 
     /**
-     * @param \Zend\I18n\Translator\Translator $translator
+     * @param \Zend\Mvc\I18n\Translator $translator
      */
-    public function setTranslator($translator) {
+    public function setTranslator($translator)
+    {
         $this->translator = $translator;
     }
 
     /**
      * @return \Zend\ServiceManager\ServiceManager
      */
-    public function getServiceManager() {
+    public function getServiceManager(): ServiceManager
+    {
         return $this->serviceManager;
     }
 
     /**
      * @param \Zend\ServiceManager\ServiceManager $serviceManager
      */
-    public function setServiceManager($serviceManager) {
+    public function setServiceManager($serviceManager)
+    {
         $this->serviceManager = $serviceManager;
     }
 
     /**
      * @return HelperPluginManager
      */
-    public function getPluginManager() {
+    public function getPluginManager(): HelperPluginManager
+    {
         return $this->pluginManager;
     }
 
     /**
      * @param HelperPluginManager $pluginManager
      */
-    public function setPluginManager($pluginManager) {
+    public function setPluginManager($pluginManager)
+    {
         $this->pluginManager = $pluginManager;
     }
 
     /**
      * @return \Zend\Mvc\Application
      */
-    public function getApp() {
+    public function getApp(): Application
+    {
         return $this->app;
     }
 
     /**
      * @param \Zend\Mvc\Application $app
      */
-    public function setApp($app) {
+    public function setApp($app)
+    {
         $this->app = $app;
     }
 
     /**
      * @param string $text
-     * @param array  $replace
+     * @param array $replace
      * @param string $delimiter
      *
      * @return string
      */
-    public function slugify($text, $replace = array(), $delimiter = '-') {
+    public function slugify(string $text, array $replace = [], string $delimiter = '-'): string
+    {
         return self::SlugifyStatic($text, $replace, $delimiter);
     }
 
@@ -242,17 +325,18 @@ class BTools extends AbstractHelper {
      * Hace slugify con un sistema mas avanzado Require PHP >=5.4 + Perl >2.0
      *
      * @param string $text
-     * @param array  $replace
+     * @param array $replace
      * @param string $delimiter
      *
      * @return string
      */
-    public static function SlugifyStatic($text, $replace = array(), $delimiter = '-') {
+    public static function SlugifyStatic(string $text, array $replace = [], string $delimiter = '-'): string
+    {
 
         $str = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', transliterator_transliterate('Any-Latin; Latin-ASCII', $text));
 
         if (!empty($replace)) {
-            $str = str_replace((array)$replace, ' ', $str);
+            $str = str_replace($replace, ' ', $str);
         }
 
         $initialChars = array(
@@ -289,7 +373,7 @@ class BTools extends AbstractHelper {
             'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ',
             'ъ', 'ы', 'ь', 'э', 'ю', 'я'
         );
-        $cyrylicTo   = array(
+        $cyrylicTo = array(
             'A', 'B', 'W', 'G', 'D', 'Ie', 'Io', 'Z', 'Z', 'I', 'J', 'K',
             'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T',
             'U', 'F', 'Ch', 'C', 'Tch', 'Sh', 'Shtch', '', 'Y', '', 'E',
@@ -321,7 +405,7 @@ class BTools extends AbstractHelper {
             'ţ', 'þ', 'ú', 'ù', 'û', 'ü', 'ŭ', 'ū', 'ů', 'ų', 'ű', 'ư', 'ŵ',
             'ý', 'ŷ', 'ÿ', 'ź', 'ż', 'ž'
         );
-        $otherTo   = array(
+        $otherTo = array(
             'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'C',
             'C', 'C', 'C', 'D', 'D', 'D', 'E',
             'E', 'E', 'E', 'E', 'E', 'E', 'E', 'G', 'G', 'G', 'G', 'G', 'a',
@@ -366,5 +450,46 @@ class BTools extends AbstractHelper {
         return $clean;
     }
 
+    /**
+     * @param string $property
+     * @return string
+     */
+    public function getMetaByProperty(string $property): string
+    {
+        /**
+         * @var \Zend\View\Renderer\PhpRenderer $view
+         */
+        $view = $this->getView();
+        $headMeta = $view->headMeta();
+        $metas = array_filter($headMeta->getContainer()->getArrayCopy(), function ($meta) use ($property) {
+            return $meta->property === $property;
+        });
+
+        if (count($metas)) {
+            $meta = current($metas);
+            return $meta->content;
+        }
+
+        return '';
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getMetaByName(string $name): string
+    {
+        /**
+         * @var \Zend\View\Renderer\PhpRenderer $view
+         */
+        $view = $this->getView();
+        $headMeta = $view->headMeta();
+        foreach ($headMeta->getContainer()->getArrayCopy() as $meta) {
+            if ($meta->name === $name) {
+                return $meta->content;
+            }
+        }
+        return '';
+    }
 
 }
