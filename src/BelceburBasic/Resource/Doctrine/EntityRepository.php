@@ -140,7 +140,7 @@ abstract class EntityRepository extends DoctrineEntityRepository
      * @return ArrayCollection
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    public function findBy(array $criteria = [], array $orderBy = [], $limit = NULL, $offset = NULL): ArrayCollection
+    public function findBy(array $criteria = [], ?array $orderBy = [], $limit = NULL, $offset = NULL): ArrayCollection
     {
         return $this->findLikeBy($criteria, $orderBy, $limit, $offset);
     }

@@ -42,13 +42,17 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository
 
     /**
      * @param Query $query
+     * @param string|null $locale
      */
-    protected function applyTranslatorGedmoHints(Query &$query)
+    protected function applyTranslatorGedmoHints(Query &$query, $locale = null)
     {
+
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, $this->gedmoWalker);
         $query->setHint(TranslatableListener::HINT_FALLBACK, TRUE);
-        if (BELCEBUR_GEDMO_TRANSLATION_LOCALE !== 'BELCEBUR_GEDMO_TRANSLATION_LOCALE') {
+        if ($locale === null && \defined('BELCEBUR_GEDMO_TRANSLATION_LOCALE')) {
             $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, BELCEBUR_GEDMO_TRANSLATION_LOCALE);
+        } elseif ($locale !== null) {
+            $query->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, $locale);
         }
     }
 
@@ -168,7 +172,7 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository
      * @return ArrayCollection
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    public function findBy(array $criteria = [], array $orderBy = [], $limit = NULL, $offset = NULL): ArrayCollection
+    public function findBy(array $criteria = [], ?array $orderBy = [], $limit = NULL, $offset = NULL): ArrayCollection
     {
         return $this->findLikeBy($criteria, $orderBy, $limit, $offset);
     }
