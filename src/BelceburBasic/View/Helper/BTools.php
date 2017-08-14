@@ -451,12 +451,13 @@ class BTools extends AbstractHelper
     }
 
     /**
-     * @param string $property
+     * @param string $value
+     * @param string $default
      * @return string
      */
-    public function getMetaByProperty(string $property, $default = ''): string
+    public function getMetaByProperty(string $value, string $default = ''): string
     {
-        return $this->getMetaBy('property', $property);
+        return $this->getMetaBy('property', $value);
     }
 
     /**
@@ -465,7 +466,7 @@ class BTools extends AbstractHelper
      * @param string $default
      * @return string
      */
-    public function getMetaBy(string $type, string $value, $default = ''): string
+    public function getMetaBy(string $type, string $value, string $default = ''): string
     {
         /**
          * @var \Zend\View\Renderer\PhpRenderer $view
@@ -475,19 +476,20 @@ class BTools extends AbstractHelper
         foreach ($headMeta->getContainer() as $meta) {
             $metaArray = (array)$meta;
             if (\array_key_exists($type, $metaArray) && $metaArray[$type] === $value) {
-                return $metaArray['content'];
+                return (string)$metaArray['content'];
             }
         }
-        return $default;
+        return (string)$default;
     }
 
     /**
-     * @param string $name
+     * @param string $value
+     * @param string $default
      * @return string
      */
-    public function getMetaByName(string $name): string
+    public function getMetaByName(string $value, string $default = ''): string
     {
-        return $this->getMetaBy('name', $name);
+        return $this->getMetaBy('name', $value);
     }
 
 }
