@@ -454,23 +454,31 @@ class BTools extends AbstractHelper
      * @param string $property
      * @return string
      */
-    public function getMetaByProperty(string $property): string
+    public function getMetaByProperty(string $property, $default = ''): string
+    {
+        return $this->getMetaBy('property', $property);
+    }
+
+    /**
+     * @param string $type
+     * @param string $value
+     * @param string $default
+     * @return string
+     */
+    public function getMetaBy(string $type, string $value, $default = ''): string
     {
         /**
          * @var \Zend\View\Renderer\PhpRenderer $view
          */
         $view = $this->getView();
         $headMeta = $view->headMeta();
-        $metas = array_filter($headMeta->getContainer()->getArrayCopy(), function ($meta) use ($property) {
-            return $meta->property === $property;
-        });
-
-        if (count($metas)) {
-            $meta = current($metas);
-            return $meta->content;
+        foreach ($headMeta->getContainer() as $meta) {
+            $metaArray = (array)$meta;
+            if (\array_key_exists($type, $metaArray) && $metaArray[$type] === $value) {
+                return $metaArray['content'];
+            }
         }
-
-        return '';
+        return $default;
     }
 
     /**
@@ -479,17 +487,7 @@ class BTools extends AbstractHelper
      */
     public function getMetaByName(string $name): string
     {
-        /**
-         * @var \Zend\View\Renderer\PhpRenderer $view
-         */
-        $view = $this->getView();
-        $headMeta = $view->headMeta();
-        foreach ($headMeta->getContainer()->getArrayCopy() as $meta) {
-            if ($meta->name === $name) {
-                return $meta->content;
-            }
-        }
-        return '';
+        return $this->getMetaBy('name', $name);
     }
 
 }

@@ -2,7 +2,7 @@
 
 '''
 
-==== Require PHP >=5.4
+==== Require PHP >=7.1
 
 - Nl2brFilter
 - View Helper
@@ -117,7 +117,7 @@ BTools::SlugifyStaticPro("привет, что такой")
     protected $em;
 
     /**
-     * @var \Zend\I18n\Translator\Translator
+     * @var \Zend\Mvc\I18n\Translator
      */
     protected $translator;
 
