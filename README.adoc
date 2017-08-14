@@ -2,7 +2,7 @@
 
 '''
 
-==== Require PHP >=7.1
+==== Require PHP >=7.0
 
 - Nl2brFilter
 - View Helper
