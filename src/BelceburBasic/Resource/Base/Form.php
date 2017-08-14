@@ -8,8 +8,8 @@ use Zend\Form\Element\Hidden;
 use Zend\Form\Fieldset;
 use Zend\Form\Form as ZendForm;
 use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
-use Zend\I18n\Translator\Translator;
 use Zend\InputFilter\InputFilter;
+use Zend\Mvc\I18n\Translator;
 
 class Form extends ZendForm
 {
@@ -55,7 +55,7 @@ class Form extends ZendForm
     }
 
     /**
-     * @return \Zend\I18n\Translator\Translator
+     * @return \Zend\Mvc\I18n\Translator
      */
     public function getTranslator(): Translator
     {
@@ -63,7 +63,7 @@ class Form extends ZendForm
     }
 
     /**
-     * @param \Zend\I18n\Translator\Translator $translator
+     * @param \Zend\Mvc\I18n\Translator $translator
      */
     public function setTranslator($translator)
     {
