@@ -172,9 +172,9 @@ abstract class EntityRepositoryTranslatable extends TranslationRepository
      * @return ArrayCollection
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    public function findBy(array $criteria = [], ?array $orderBy = [], $limit = NULL, $offset = NULL): ArrayCollection
+    public function findBy(array $criteria = [], array $orderBy = null, $limit = NULL, $offset = NULL): ArrayCollection
     {
-        return $this->findLikeBy($criteria, $orderBy, $limit, $offset);
+        return $this->findLikeBy($criteria, (array)$orderBy, $limit, $offset);
     }
 
     /**
