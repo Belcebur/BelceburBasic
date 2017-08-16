@@ -21,6 +21,11 @@ abstract class Controller extends AbstractActionController
 {
 
     /**
+     * @var \Zend\ServiceManager\ServiceManager
+     */
+    private $serviceManager;
+
+    /**
      * @var EntityManager $entityManager
      */
     private $entityManager;
@@ -37,6 +42,11 @@ abstract class Controller extends AbstractActionController
          * @var EntityManager $entityManager
          */
         $serviceManager = $e->getApplication()->getServiceManager();
+
+        if (!$this->serviceManager) {
+            $this->setServiceManager($serviceManager);
+        }
+
         if (!$this->entityManager) {
             $entityManager = $serviceManager->get(EntityManager::class);
             $this->setEntityManager($entityManager);
@@ -49,6 +59,23 @@ abstract class Controller extends AbstractActionController
 
         return parent::onDispatch($e);
     }
+
+    /**
+     * @return \Zend\ServiceManager\ServiceManager
+     */
+    public function getServiceManager()
+    {
+        return $this->serviceManager;
+    }
+
+    /**
+     * @param \Zend\ServiceManager\ServiceManager $serviceManager
+     */
+    public function setServiceManager($serviceManager)
+    {
+        $this->serviceManager = $serviceManager;
+    }
+
 
     /**
      * @return \Zend\Mvc\I18n\Translator
@@ -90,6 +117,17 @@ abstract class Controller extends AbstractActionController
         return $this->request;
     }
 
+    /**
+     * Genera un password
+     *
+     * @deprecated Use randomPassword
+     * @param int $length
+     * @return string
+     */
+    public function random_password($length = 8): string
+    {
+        return $this->randomPassword($length);
+    }
 
     /**
      * Genera un password
@@ -103,19 +141,6 @@ abstract class Controller extends AbstractActionController
     {
         return substr(str_shuffle($chars), 0, $length);
     }
-
-    /**
-     * Genera un password
-     *
-     * @deprecated Use randomPassword
-     * @param int $length
-     * @return string
-     */
-    public function random_password($length = 8): string
-    {
-        return $this->randomPassword($length);
-    }
-
 
     public function downloadFile($filePath, $filename = FALSE)
     {
