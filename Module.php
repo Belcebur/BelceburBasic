@@ -16,7 +16,7 @@ class Module
          */
         $application = $e->getApplication();
         $eventManager = $application->getEventManager();
-        $translator = $application->getServiceManager()->get('translator');
+        $translator = $application->getServiceManager()->get('MvcTranslator');
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'configGedmoTranslations'], -1000);
     }
 
@@ -30,7 +30,7 @@ class Module
         $application = $e->getApplication();
 
         $eventManager = $application->getEventManager();
-        $translator = $application->getServiceManager()->get('translator');
+        $translator = $application->getServiceManager()->get('MvcTranslator');
         define('BELCEBUR_GEDMO_TRANSLATION_LOCALE', $translator->getLocale());
         define('BELCEBUR_GEDMO_TRANSLATION_FALLBACK_LOCALE', $translator->getFallbackLocale());
     }

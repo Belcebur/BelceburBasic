@@ -60,7 +60,7 @@ class BTools extends AbstractHelper
         $this->request = $this->app->getRequest();
         $this->event = $this->app->getMvcEvent();
         $this->em = $this->serviceManager->get(EntityManager::class);
-        $this->translator = $this->serviceManager->get('translator');
+        $this->translator = $this->serviceManager->get('MvcTranslator');
     }
 
     /**

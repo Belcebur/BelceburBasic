@@ -43,7 +43,7 @@ abstract class Controller extends AbstractActionController
         }
 
         if (!$this->translator) {
-            $translator = $serviceManager->get('translator');
+            $translator = $serviceManager->get('MvcTranslator');
             $this->setTranslator($translator);
         }
 
