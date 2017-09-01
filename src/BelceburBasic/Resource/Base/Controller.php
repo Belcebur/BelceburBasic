@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityManager;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Http\Response\Stream;
+use Zend\I18n\Translator\Translator;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\I18n\Translator;
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\RequestInterface;
 
@@ -31,14 +31,14 @@ abstract class Controller extends AbstractActionController
     private $entityManager;
 
     /**
-     * @var \Zend\Mvc\I18n\Translator $translator
+     * @var Translator $translator
      */
     private $translator;
 
     public function onDispatch(MvcEvent $e)
     {
         /**
-         * @var \Zend\Mvc\I18n\Translator $translator
+         * @var \Zend\Mvc\I18n\Translator $mvcTranslator
          * @var EntityManager $entityManager
          */
         $serviceManager = $e->getApplication()->getServiceManager();
@@ -53,7 +53,9 @@ abstract class Controller extends AbstractActionController
         }
 
         if (!$this->translator) {
-            $translator = $serviceManager->get('MvcTranslator');
+            $mvcTranslator = $serviceManager->get('MvcTranslator');
+            $translator = $mvcTranslator->getTranslator();
+
             $this->setTranslator($translator);
         }
 
@@ -78,15 +80,15 @@ abstract class Controller extends AbstractActionController
 
 
     /**
-     * @return \Zend\Mvc\I18n\Translator
+     * @return Translator|null
      */
-    public function getTranslator(): Translator
+    public function getTranslator()
     {
         return $this->translator;
     }
 
     /**
-     * @param \Zend\Mvc\I18n\Translator $translator
+     * @param Translator $translator
      */
     public function setTranslator($translator)
     {
@@ -94,9 +96,9 @@ abstract class Controller extends AbstractActionController
     }
 
     /**
-     * @return EntityManager
+     * @return EntityManager|null
      */
-    public function getEntityManager(): EntityManager
+    public function getEntityManager()
     {
         return $this->entityManager;
     }

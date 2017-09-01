@@ -5,10 +5,9 @@ namespace BelceburBasic\View\Helper;
 use Doctrine\ORM\EntityManager;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\Application;
-use Zend\Mvc\I18n\Translator;
+use Zend\Mvc\I18n\Translator as MvcTranslator;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
-use Zend\ServiceManager\ServiceManager;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\HelperPluginManager;
 
@@ -31,7 +30,7 @@ class BTools extends AbstractHelper
     protected $em;
 
     /**
-     * @var \Zend\Mvc\I18n\Translator
+     * @var \Zend\I18n\Translator\Translator
      */
     protected $translator;
 
@@ -54,13 +53,34 @@ class BTools extends AbstractHelper
 
     public function __construct(HelperPluginManager $pluginManager)
     {
+        /**
+         * @var MvcTranslator $translator
+         */
         $this->pluginManager = $pluginManager;
-        $this->serviceManager = $pluginManager->getServiceLocator();
-        $this->app = $pluginManager->getServiceLocator()->get('Application');
-        $this->request = $this->app->getRequest();
-        $this->event = $this->app->getMvcEvent();
-        $this->em = $this->serviceManager->get(EntityManager::class);
-        $this->translator = $this->serviceManager->get('MvcTranslator');
+        $sm = $pluginManager->getServiceLocator();
+        $this->serviceManager = $sm;
+        $this->app = $sm->get('Application');
+        $this->em = $sm->get(EntityManager::class);
+        $this->request = $this->getApp()->getRequest();
+        $this->event = $this->getApp()->getMvcEvent();
+        $translator = $sm->get('MvcTranslator');
+        $this->translator = $translator->getTranslator();
+    }
+
+    /**
+     * @return \Zend\Mvc\Application
+     */
+    public function getApp(): Application
+    {
+        return $this->app;
+    }
+
+    /**
+     * @param \Zend\Mvc\Application $app
+     */
+    public function setApp($app)
+    {
+        $this->app = $app;
     }
 
     /**
@@ -246,25 +266,34 @@ class BTools extends AbstractHelper
     }
 
     /**
-     * @return \Zend\Mvc\I18n\Translator
+     * @return \Zend\I18n\Translator\Translator|null
      */
-    public function getTranslator(): Translator
+    public function getTranslator()
     {
-        return $this->translator;
+        $translator = $this->translator;
+        if ($translator instanceof MvcTranslator) {
+            return $translator->getTranslator();
+        }
+        return $translator;
     }
 
     /**
-     * @param \Zend\Mvc\I18n\Translator $translator
+     * @param \Zend\I18n\Translator\Translator $translator
      */
     public function setTranslator($translator)
     {
-        $this->translator = $translator;
+        if ($translator instanceof MvcTranslator) {
+            $this->translator = $translator->getTranslator();
+        } else {
+            $this->translator = $translator;
+        }
+
     }
 
     /**
-     * @return \Zend\ServiceManager\ServiceManager
+     * @return \Zend\ServiceManager\ServiceManager|null
      */
-    public function getServiceManager(): ServiceManager
+    public function getServiceManager()
     {
         return $this->serviceManager;
     }
@@ -291,22 +320,6 @@ class BTools extends AbstractHelper
     public function setPluginManager($pluginManager)
     {
         $this->pluginManager = $pluginManager;
-    }
-
-    /**
-     * @return \Zend\Mvc\Application
-     */
-    public function getApp(): Application
-    {
-        return $this->app;
-    }
-
-    /**
-     * @param \Zend\Mvc\Application $app
-     */
-    public function setApp($app)
-    {
-        $this->app = $app;
     }
 
     /**

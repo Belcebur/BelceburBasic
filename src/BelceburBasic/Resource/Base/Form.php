@@ -8,8 +8,8 @@ use Zend\Form\Element\Hidden;
 use Zend\Form\Fieldset;
 use Zend\Form\Form as ZendForm;
 use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
+use Zend\I18n\Translator\Translator;
 use Zend\InputFilter\InputFilter;
-use Zend\Mvc\I18n\Translator;
 
 class Form extends ZendForm
 {
@@ -21,15 +21,12 @@ class Form extends ZendForm
      */
     protected $em;
 
-
     /**
      * Doctrine Entity
      */
     protected $entity;
 
-
     /**
-     *
      * @var Translator
      * @name $translator
      */
@@ -55,15 +52,15 @@ class Form extends ZendForm
     }
 
     /**
-     * @return \Zend\Mvc\I18n\Translator
+     * @return Translator|null
      */
-    public function getTranslator(): Translator
+    public function getTranslator()
     {
         return $this->translator;
     }
 
     /**
-     * @param \Zend\Mvc\I18n\Translator $translator
+     * @param Translator $translator
      */
     public function setTranslator($translator)
     {
@@ -97,9 +94,9 @@ class Form extends ZendForm
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
+     * @return \Doctrine\ORM\EntityManager|null
      */
-    public function getEm(): EntityManager
+    public function getEm()
     {
         return $this->em;
     }
