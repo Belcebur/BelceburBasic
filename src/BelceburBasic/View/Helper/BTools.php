@@ -201,7 +201,7 @@ class BTools extends AbstractHelper
     /**
      * @return \Zend\Mvc\Router\RouteMatch
      */
-    public function getRouteMatch(): RouteMatch
+    public function getRouteMatch()
     {
         return $this->getEvent()->getRouteMatch();
     }
@@ -209,7 +209,7 @@ class BTools extends AbstractHelper
     /**
      * @return \Zend\Mvc\MvcEvent
      */
-    public function getEvent(): MvcEvent
+    public function getEvent()
     {
         return $this->event;
     }
@@ -236,7 +236,7 @@ class BTools extends AbstractHelper
     /**
      * @return \Zend\Http\PhpEnvironment\Request
      */
-    public function getRequest(): Request
+    public function getRequest()
     {
         return $this->request;
     }
@@ -252,7 +252,7 @@ class BTools extends AbstractHelper
     /**
      * @return EntityManager
      */
-    public function getEm(): EntityManager
+    public function getEm()
     {
         return $this->em;
     }
@@ -309,7 +309,7 @@ class BTools extends AbstractHelper
     /**
      * @return HelperPluginManager
      */
-    public function getPluginManager(): HelperPluginManager
+    public function getPluginManager()
     {
         return $this->pluginManager;
     }
